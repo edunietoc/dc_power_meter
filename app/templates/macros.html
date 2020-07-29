@@ -1,0 +1,9 @@
+{% macro render_measurements(measure) %}
+<tr>
+  <td>{{measure.id}}</td>
+  <td>{{measure.to_dict()['Voltage']}}</td>
+  <td>{{measure.to_dict()['Current_L1']}}</td>
+  <td>{{measure.to_dict()['Current_L2']}}</td>
+  <td>{{measure.to_dict()['Short_Circuit']}}</td>
+</tr>
+{% endmacro %}

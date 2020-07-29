@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+{% import 'macros.html' as macros %}
+
+{% block content %}
+
+
+  <div class="container" style="margin-top: 50px ;">
+    <div class="row justify-content-around">
+
+      <div class="col-3">
+        <div class="card" style="width: 18rem;">
+          <div class="card-body">
+            <h4 class="card-title">Voltaje</h4>
+            <h3 class="card-text" style="text-align: center;" id="Voltage">{{Voltage}}</h3>
+            <h6 class="card-subtitle mb-2 text-muted" style="text-align: center;">Voltios</h6>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-3">
+        <div class="card" style="width: 18rem;">
+          <div class="card-body">
+            <h4 class="card-title">Corriente Linea 1</h4>
+            <h3 class="card-text" style="text-align: center; " id="Current_L1">{{Current_L1}}</h3>
+            <h6 class="card-subtitle mb-2 text-muted" style="text-align: center;">Amperios</h6>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-3">
+        <div class="card" style="width: 18rem;">
+          <div class="card-body">
+            <h4 class="card-title">Corriente Linea 2</h4>
+            <h3 class="card-text" style="text-align: center;" id="Current_L2">{{Current_L2}}</h3>
+            <h6 class="card-subtitle mb-2 text-muted" style="text-align: center;">Amperios</h6>
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="col-3">
+        <div class="card" style="width: 18rem;">
+          <div class="card-body">
+            <h4 class="card-title">Deteccion de Corto</h4>
+            <h3 class="card-text" style="text-align: center;" id="Short_Circuit">{{Short_Circuit}}</h3>
+            <h6 class="card-subtitle mb-2 text-muted" style="text-align: center;">Digital</h6>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="row justify-content-around">
+      
+      <div class="col-4" style="margin-top: 50px;">
+        <div class="card" style="width: 18rem; padding: 20px 20px 20px 20px;">
+
+          <form action="/Home" method="POST">
+            <div class="form-group">
+              <label>Limite Superior de Voltaje</label>
+              <input type="string" class="form-control" id="upperVolt" name="upperVolt" aria-describedby="emailHelp" placeholder="Introduzca un valor">
+            
+            </div>
+
+            <div class="form-group">
+              <label>Limite Inferior de Voltaje</label>
+              <input type="string" class="form-control" id="lowerVolt" name="lowerVolt" aria-describedby="emailHelp" placeholder="Introduzca un valor">
+            
+            </div>
+
+            <div class="form-group">
+              <label>Limite de Corriente (Linea 1)</label>
+              <input type="string" class="form-control" id="L1_CL" name="L1_CL" aria-describedby="emailHelp" placeholder="Introduzca un valor">
+            
+            </div>
+
+            <div class="form-group">
+              <label>Limite de Corriente (Linea 2)</label>
+              <input type="string" class="form-control" id="L2_CL" name="L2_CL" aria-describedby="emailHelp" placeholder="Introduzca un valor">
+            
+            </div>
+          
+    
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+        </div>
+
+      </div>
+    
+    
+      <div class="col-8" style="margin-top: 50px;">  <!-- Table -->
+      
+        <table class="table">
+          <thead class="thead-light">
+
+            <tr>
+              <th scope="col">{{today}} Hora</th>
+              <th scope="col">Voltaje (V)</th>
+              <th scope="col">Corriente Linea 1 (A)</th>
+              <th scope="col">Corriente Linea 2 (A)</th>
+              <th scope="col">Corto Circuito</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            {% for measure in measurements %}
+              {{macros.render_measurements(measure)}}
+            {% endfor %}
+
+
+          </tbody>
+        </table>
+        <form action="/Database" method="GET">
+          <button type="submit" style="width: 100%;" class="btn btn-primary">Ver Datos</button>
+        </form>
+
+      </div>
+    
+    
+    </div> <!-- End of Second Row -->
+    
+
+    <div class="alert alert-danger" id="Alert" style="margin-top: 20px" role="alert">
+      <h3 id="message" style= "text-align: center;"></h3>
+    </div>
+    
+  </div>
+  <script>
+
+    let Voltage = document.getElementById('Voltage');
+    let Current_L1 = document.getElementById('Current_L1')
+    let Current_L2 = document.getElementById('Current_L2')
+    let Short_Circuit = document.getElementById('Short_Circuit')
+    const message = document.getElementById('message')
+    const alert = document.getElementById('Alert')
+     
+    async function getData () {
+      const response = await fetch('/Data')
+    
+      if (response.ok) {
+        const responseJSON = await response.json()
+        return responseJSON
+      } else {
+        console.log('ERROR')
+      }
+    }
+    
+    function setValues(data){
+      try{
+        //data = JSON.parse(data)
+        Voltage.innerText = data['Voltage']
+        Current_L1.innerText = data['Current_L1']
+        Current_L2.innerText = data['Current_L2']
+        Short_Circuit.innerText = data['Short_Circuit']
+        message.innerText = data["message"];
+        if (data['Code']==0) {
+          alert.className = "alert alert-success";
+        }
+        else{
+          alert.className = "alert alert-danger";
+        }
+      }
+      catch(e){
+        console.log(e);
+      }
+      
+    
+    }
+    
+    setInterval( async() => {
+      const data = await getData()
+      console.log(data);
+      setValues(data);
+    }, 1000);
+
+
+
+
+  </script>
+{% endblock%}

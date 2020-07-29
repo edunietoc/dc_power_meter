@@ -1,0 +1,5 @@
+flask
+flask-Bootstrap4
+pyserial
+flask-wtf
+firebase-admin

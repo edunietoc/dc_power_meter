@@ -1,0 +1,111 @@
+{% macro render_charts(Voltage_list,Current_L1_list,Current_L2_list,measurement_list) %}
+
+<div class="container" style="height: 600px;" >
+
+  <canvas id="VoltageChart" "></canvas>
+  <script>
+  var ctx = document.getElementById('VoltageChart').getContext('2d');
+  var VoltageChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+          labels:  [{% for m in measurement_list %}
+          "{{m}}",
+        {% endfor %}],
+          datasets: [{
+              label: 'Variacion de Voltaje',
+
+              backgroundColor: 'rgba(255, 99, 132, 0.1)',
+              borderColor: 'rgb(255, 99, 132)',
+              data: [{% for V in Voltage_list %}
+                {{V}},
+              {% endfor %}],
+             
+          }]
+      },
+      options: {
+          scales: {
+              yAxes: [{
+                  ticks: {
+                      beginAtZero: true
+                  }
+              }]
+          }
+      }
+  });
+  </script>
+
+</div>
+
+<div class="container" style="height: 600px;" >
+
+  <canvas id="Current_L1" "></canvas>
+  <script>
+  var ctx = document.getElementById('Current_L1').getContext('2d');
+  var Current_L1Chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+          labels:  [{% for m in measurement_list %}
+          "{{m}}",
+        {% endfor %}],
+          datasets: [{
+              label: 'Corriente de Linea 1',
+
+              backgroundColor: 'rgba(187,225,250,0.1)',
+              borderColor: '#3282b8',
+              data: [{% for A in Current_L1_list %}
+                {{A}},
+              {% endfor %}],
+             
+          }]
+      },
+      options: {
+          scales: {
+              yAxes: [{
+                  ticks: {
+                      beginAtZero: true
+                  }
+              }]
+          }
+      }
+  });
+  </script>
+
+</div>
+
+<div class="container" style="height: 200px;" >
+
+  <canvas id="Current_L2" "></canvas>
+  <script>
+  var ctx = document.getElementById('Current_L2').getContext('2d');
+  var Current_L1Chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+          labels:  [{% for m in measurement_list %}
+          "{{m}}",
+        {% endfor %}],
+          datasets: [{
+              label: 'Corriente de Linea 2',
+
+              backgroundColor: 'rgba(99,154,103,0.1)',
+              borderColor: '#2b580c',
+              data: [{% for A in Current_L2_list %}
+                {{A}},
+              {% endfor %}],
+             
+          }]
+      },
+      options: {
+          scales: {
+              yAxes: [{
+                  ticks: {
+                      beginAtZero: true
+                  }
+              }]
+          }
+      }
+  });
+  </script>
+
+</div>
+  
+{% endmacro %}

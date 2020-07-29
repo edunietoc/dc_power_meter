@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% import 'macros.html' as macros %}
+{% import 'chart_macros.html' as chart_macros %}
+
+
+{% block head %}
+  {{ super() }}
+
+  {% block scripts %}
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.js'></script>
+  {% endblock %}
+{% endblock %}
+
+
+
+
+
+{% block content %}
+  
+<div class="row justify-content-around" style="margin-top: 50px;">
+
+  <div class="col-6">
+    <form class="form-inline" action="/Database" method="POST">
+      <label style="width: 8%;" >Fecha:</label>
+      <input type="date" style="width: 62%;" class="form-control" name="Date" placeholder="Introduzca Fecha (dd:mm:yy)">
+      <button type="submit" style="width: 30%;" class="btn btn-primary">Ver Datos</button>
+    </form>
+  </div>
+  
+
+
+
+</div>
+
+<div class="row ">
+  <div class="col-4" style="margin-top: 50px; margin-left:20px">  <!-- First Table -->
+      
+    <table class="table">
+      <thead class="thead-light">
+
+        <tr>
+          <th scope="col">{{today}} Hora</th>
+          <th scope="col">Voltaje (V)</th>
+          <th scope="col">Corriente Linea 1 (A)</th>
+          <th scope="col">Corriente Linea 2 (A)</th>
+          <th scope="col">Corto Circuito</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        {% for measure in measurements %}
+          {{macros.render_measurements(measure)}}
+        {% endfor %}
+
+      </tbody>
+    </table>
+
+  </div>
+
+  <div class="col-7" style="margin-top: 50px; width: 600px">  <!-- Second Table -->
+      
+    <table class="table">
+      <thead class="thead-light">
+
+        <tr>
+          <th scope="col">Promedio Voltaje</th>
+          <th scope="col">Voltaje Max</th>
+          <th scope="col">Voltaje Min</th>
+          <th scope="col">Promedio Corriente L1 </th>
+          <th scope="col">Corriente L1 Max</th>
+          <th scope="col">Corriente L1 Min</th>
+          <th scope="col">Promedio Corriente L2 </th>
+          <th scope="col">Corriente L2 Max</th>
+          <th scope="col">Corriente L2 Min</th>
+          <th scope="col">Contador de Fallas</th>
+        </tr>
+      </thead>
+
+      <tr>
+        <td>{{'{:0.4f}'.format(Voltage)}}</td>
+        <td>{{'{:0.4f}'.format(maxVoltage)}}</td>
+        <td>{{'{:0.4f}'.format(minVoltage)}}</td>
+        <td>{{'{:0.4f}'.format(Current_L1)}}</td>
+        <td>{{'{:0.4f}'.format(maxCurrent_L1)}}</td>
+        <td>{{'{:0.4f}'.format(minCurrent_L1)}}</td>
+        <td>{{'{:0.4f}'.format(Current_L2)}}</td>
+        <td>{{'{:0.4f}'.format(maxCurrent_L2)}}</td>
+        <td>{{'{:0.4f}'.format(minCurrent_L2)}}</td>
+        <td>{{Short_Circuit_Counter}}</td>
+      </tr>
+
+  
+    </table>
+  
+
+  
+    <div class="container" style="display: flex; flex-direction:column; justify-content: space-between;" >
+      {{chart_macros.render_charts(Voltage_list,Current_L1_list,Current_L2_list,measurement_list)}}
+    </div>
+
+
+  
+
+  </div>
+</div>
+
+
+
+{% endblock %}
